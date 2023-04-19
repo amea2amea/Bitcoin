@@ -19,9 +19,19 @@ def __handle_message(args_tuple):
 
 # ポート番号の取得
 def __get_myip():
-    # 環境によって socket.gethostbyname(socket.gethostname())ではうまくIPアドレスが取れないためこちらを使った
+    
+    # 環境においては使用不可だが、下記でも可能
+    # socket.gethostname : 実行している環境のホスト名を取得
+    # socket.gethostbyname : ホスト名から対応するホスト情報を取得
+    # socket.gethostbyname(socket.gethostname()): ルータに接続中のローカルIPアドレスを取得
+
+    # ソケットの作成
+    # AF_INET       : IPv4 ベースのアドレス体系
+    # SOCK_DGRAM    : データグラムソケット(UDPの設定)
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # Googleが運営するパブリックDNSサービス（Google Public DNS）を利用
     s.connect(("8.8.8.8", 80))
+    # ソケット結び付けられている現在のアドレスを取得
     name = s.getsockname()[0]
     return name
 
@@ -31,7 +41,7 @@ def main():
 
     # ソケットの作成
     # AF_INET       : IPv4 ベースのアドレス体系
-    # SOCK_STREAM   : TCP/IPの設定
+    # SOCK_STREAM   : ストリームソケット(TCP/IPの設定)
     my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # max_workers 個のスレッドを非同期実行に使う
